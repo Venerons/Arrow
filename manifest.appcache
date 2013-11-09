@@ -1,0 +1,20 @@
+CACHE MANIFEST
+# 09-11-2013:v1
+
+# page that will be displayed if the user is offline
+FALLBACK:
+
+# All other resources require the user to be online
+NETWORK:
+*
+
+# Additional resources to cache
+CACHE:
+manifest.webapp
+LICENSE.md
+js/lib/pointer.min.js
+js/lib/visibility.min.js
+js/lib/raphael-2.1.2.min.js
+js/lib/AudioContextMonkeyPatch.min.js
+js/lib/qwerty-hancock.min.js
+css/texture.png
