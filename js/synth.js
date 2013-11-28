@@ -129,3 +129,5 @@ keyboard.keyUp(function (note, frequency) {
         }
     }
 });
+
+window.addEventListener('load', function () { document.getElementById("loading").hidden = true; }, false);

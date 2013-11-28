@@ -3,6 +3,10 @@
 _Copyright (c) 2013 Daniele Veneroni._  
 _Released under GPLv3 License. See [LICENSE.md](LICENSE.md) for further information._
 
+### Update 28/11/2013 (2)
+
+* New Loading Message
+
 ### Update 28/11/2013
 
 * Add Chrome Mobile Web App compatibility
