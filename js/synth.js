@@ -87,7 +87,7 @@ function touch(e) {
 	return false;
 }
 
-var pad = document.querySelector("svg");
+var pad = document.getElementById("pad");
 
 pad.addEventListener("pointerdown", touch);
 pad.addEventListener("pointerup", function () {

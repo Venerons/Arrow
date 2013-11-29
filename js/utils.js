@@ -2,7 +2,7 @@
 // Released under GPLv3 License. See LICENSE.md for further information.
 "use strict";
 
-var paper = Raphael(0, 0, "100%", "100%");
+var paper = new Palette("pad");
 
 var menuBtn = document.getElementById("menuBtn");
 var menu = document.getElementById("menu");
@@ -55,6 +55,14 @@ util.docHeight = getDocHeight();
 util.docWidth = getDocWidth();
 util.maxSpectrumHeight = util.docHeight / 4 * 3;
 
+paper.size(util.docWidth, util.docHeight);
+switch (spectrumSelect.value) {
+    case "1": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,144,200)", "rgb(255,144,200)"); break; // from blue to pink
+    case "2": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,0,0)", "rgb(0,255,255)"); break; // from black to blue
+    case "3": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,0,0)", "rgb(255,255,255)"); break; // from black to white
+    default: paper.gradient(0, 0, util.docWidth, 0, "rgb(0,144,200)", "rgb(255,144,200)"); break; // from blue to pink
+}
+
 // LOAD PRESETS ***********************************************************************************
 //localStorage.clear(); // CLEAR ALL LOCALSTORAGE
 if (localStorage.getItem("userPresets") === null) {
@@ -73,26 +81,14 @@ function loadPresets() {
 loadPresets();
 
 // GRAPHICS ***************************************************************************************
-var spectrum = [];
-var firstTime = true;
-
 function drawSpectrum(array) {
-    if (firstTime) {
-        for (var i = 0; i < (array.length); i++){
-            spectrum[i] = paper.rect(i * 5, util.docHeight, 3, util.docHeight);
-            spectrum[i].attr("stroke-width", 0);
-            switch (spectrumSelect.value) {
-                case "1": spectrum[i].attr("fill", "rgb("+i+",144,200)"); break; // from blue to pink
-                case "2": spectrum[i].attr("fill", "rgb(0,"+i+","+i+")"); break; // from black to blue
-                case "3": spectrum[i].attr("fill", "rgb("+i+","+i+","+i+")"); break; // from black to white
-                default: spectrum[i].attr("fill", "rgb("+i+",144,200)"); break; // from blue to pink
-            }
-        }
-        firstTime = false;
-    }
+    paper.clear(0, 0, util.docWidth, util.docHeight);
+
+    var gap = util.docWidth / (array.length * 2);
+
     for (var i = 0; i < (array.length); i++){
         var newy = util.docHeight - (util.maxSpectrumHeight * array[i] / 256);
-        spectrum[i].attr({y: newy});
+        paper.rect(i * (gap * 2), newy, gap, util.docHeight);
     }
 }
 
@@ -197,13 +193,11 @@ delayFeedbackRange.oninput = function () {
 
 // OPTIONS CONTROLS *******************************************************************************
 spectrumSelect.onchange = function () {
-    for (var i = 0; i < (spectrum.length); i++){
-        switch (spectrumSelect.value) {
-            case "1": spectrum[i].attr("fill", "rgb("+i+",144,200)"); break; // from blue to pink
-            case "2": spectrum[i].attr("fill", "rgb(0,"+i+","+i+")"); break; // from black to blue
-            case "3": spectrum[i].attr("fill", "rgb("+i+","+i+","+i+")"); break; // from black to white
-            default: spectrum[i].attr("fill", "rgb("+i+",144,200)"); break; // from blue to pink
-        }
+    switch (spectrumSelect.value) {
+        case "1": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,144,200)", "rgb(255,144,200)"); break; // from blue to pink
+        case "2": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,0,0)", "rgb(0,255,255)"); break; // from black to blue
+        case "3": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,0,0)", "rgb(255,255,255)"); break; // from black to white
+        default: paper.gradient(0, 0, util.docWidth, 0, "rgb(0,144,200)", "rgb(255,144,200)"); break; // from blue to pink
     }
 };
 
