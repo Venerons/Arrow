@@ -38,7 +38,7 @@ nodes.feedback.gain.value = 0;
 nodes.volume.gain.value = 0.5;
 
 nodes.analyser.smoothingTimeConstant = 0.3;
-nodes.analyser.fftSize = 1024;
+nodes.analyser.fftSize = spectrumSize.value;
 
 // CONNECT THE NODES
 nodes.touchOSC.connect(nodes.touchOSCvolume);
@@ -53,11 +53,11 @@ nodes.volume.connect(nodes.analyser);
 nodes.analyser.connect(nodes.script);
 nodes.script.connect(context.destination);
 
-nodes.script.onaudioprocess = function() {
+nodes.script.addEventListener("audioprocess", function() {
     var array =  new Uint8Array(nodes.analyser.frequencyBinCount);
     nodes.analyser.getByteFrequencyData(array);
     drawSpectrum(array);
-};
+}, false);
 
 function oscFrequencyChange(e) {
 	var minValue = 27.5;
@@ -82,18 +82,18 @@ function touch(e) {
 	nodes.touchOSCvolume.gain.value = 1;
 	oscFrequencyChange(e);
 	vcfFrequencyChange(e);
-	pad.addEventListener("pointermove", touch);
+	pad.addEventListener("pointermove", touch, false);
 	e.preventDefault();
 	return false;
 }
 
 var pad = document.getElementById("pad");
 
-pad.addEventListener("pointerdown", touch);
+pad.addEventListener("pointerdown", touch, false);
 pad.addEventListener("pointerup", function () {
 	pad.removeEventListener("pointermove", touch);
 	nodes.touchOSCvolume.gain.value = 0;
-});
+}, false);
 
 // KEYBOARD SETUP *********************************************************************************
 var keyboard = qwertyHancock({

@@ -30,6 +30,7 @@ var delayFeedbackLabel = document.getElementById("delayFeedbackLabel");
 var delayFeedbackRange = document.getElementById("delayFeedbackRange");
 
 var spectrumSelect = document.getElementById("spectrumSelect");
+var spectrumSize = document.getElementById("spectrumSize");
 
 var osccollapsible = document.getElementById("osc-collapsible");
 var filtercollapsible = document.getElementById("filter-collapsible");
@@ -51,17 +52,23 @@ function toFixed(value, precision) {
 }
 
 var util = {};
-util.docHeight = getDocHeight();
-util.docWidth = getDocWidth();
-util.maxSpectrumHeight = util.docHeight / 4 * 3;
 
-paper.size(util.docWidth, util.docHeight);
-switch (spectrumSelect.value) {
-    case "1": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,144,200)", "rgb(255,144,200)"); break; // from blue to pink
-    case "2": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,0,0)", "rgb(0,255,255)"); break; // from black to blue
-    case "3": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,0,0)", "rgb(255,255,255)"); break; // from black to white
-    default: paper.gradient(0, 0, util.docWidth, 0, "rgb(0,144,200)", "rgb(255,144,200)"); break; // from blue to pink
-}
+function adaptScreen() {
+    util.docHeight = getDocHeight();
+    util.docWidth = getDocWidth();
+    util.maxSpectrumHeight = util.docHeight / 4 * 3;
+    paper.size(util.docWidth, util.docHeight);
+    switch (spectrumSelect.value) {
+        case "1": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,144,200)", "rgb(255,144,200)"); break; // from blue to pink
+        case "2": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,0,0)", "rgb(0,255,255)"); break; // from black to blue
+        case "3": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,0,0)", "rgb(255,255,255)"); break; // from black to white
+        default: paper.gradient(0, 0, util.docWidth, 0, "rgb(0,144,200)", "rgb(255,144,200)"); break; // from blue to pink
+    }
+};
+
+adaptScreen();
+
+window.addEventListener("resize", function () { adaptScreen(); }, false);
 
 // LOAD PRESETS ***********************************************************************************
 //localStorage.clear(); // CLEAR ALL LOCALSTORAGE
@@ -93,18 +100,18 @@ function drawSpectrum(array) {
 }
 
 // MENU CONTROLS **********************************************************************************
-menuBtn.onclick = function () { menu.hidden = false; menuBtn.hidden = true; };
-helpBtn.onclick = function () { help.hidden = false; };
-closeBtn.onclick = function () { menu.hidden = true; menuBtn.hidden = false; };
-helpCloseBtn.onclick = function () { help.hidden = true; };
+menuBtn.addEventListener("click", function () { menu.hidden = false; menuBtn.hidden = true; }, false);
+helpBtn.addEventListener("click", function () { help.hidden = false; }, false);
+closeBtn.addEventListener("click", function () { menu.hidden = true; menuBtn.hidden = false; }, false);
+helpCloseBtn.addEventListener("click", function () { help.hidden = true; }, false);
 
-document.getElementById("osc-title").onclick = function () { osccollapsible.hidden = !osccollapsible.hidden; };
-document.getElementById("filter-title").onclick = function () { filtercollapsible.hidden = !filtercollapsible.hidden; };
-document.getElementById("delay-title").onclick = function () { delaycollapsible.hidden = !delaycollapsible.hidden; };
-document.getElementById("options-title").onclick = function () { optionscollapsible.hidden = !optionscollapsible.hidden; };
+document.getElementById("osc-title").addEventListener("click", function () { osccollapsible.hidden = !osccollapsible.hidden; }, false);
+document.getElementById("filter-title").addEventListener("click", function () { filtercollapsible.hidden = !filtercollapsible.hidden; }, false);
+document.getElementById("delay-title").addEventListener("click", function () { delaycollapsible.hidden = !delaycollapsible.hidden; }, false);
+document.getElementById("options-title").addEventListener("click", function () { optionscollapsible.hidden = !optionscollapsible.hidden; }, false);
 
 // PRESET CONTROLS ********************************************************************************
-presetSelect.onchange = function () {
+presetSelect.addEventListener("change", function () {
     var p = presets[presetSelect.value];
     // set the environment
     nodes.touchOSC.type = p.osc.wave;
@@ -132,8 +139,8 @@ presetSelect.onchange = function () {
     delayTimeLabel.innerHTML = Math.round(p.delay.delayTime*1000)+"ms";
     //delayFeedbackRange.value = (BOH?);
     delayFeedbackLabel.innerHTML = Math.round(p.delay.feedback*100);
-};
-saveBtn.onclick = function () {
+}, false);
+saveBtn.addEventListener("click", function () {
     var preset = {};
     preset.name = window.prompt("Preset Name: ");
     preset.osc = {};
@@ -152,54 +159,57 @@ saveBtn.onclick = function () {
     localStorage.userPresets = JSON.stringify(userPresets);
     loadPresets();
     presetSelect.value = presets.length-1;
-};
+}, false);
 
 // OSC CONTROLS ***********************************************************************************
-waveSelect.onchange = function () {
+waveSelect.addEventListener("change", function () {
     //var waves = { "sine": nodes.osc.SINE, "square": nodes.osc.SQUARE, "sawtooth": nodes.osc.SAWTOOTH, "triangle": nodes.osc.TRIANGLE };
 	nodes.touchOSC.type = waveSelect.value;
-};
-oscDetuneRange.oninput = function () {
+}, false);
+oscDetuneRange.addEventListener("input", function () {
     nodes.touchOSC.detune.value = oscDetuneRange.value;
     for (var i = 0; i < keyNodes.length; i++) { keyNodes[i].detune.value = oscDetuneRange.value; }
     oscDetuneLabel.innerHTML = oscDetuneRange.value;
-};
+}, false);
 
 // FILTER CONTROLS ********************************************************************************
-filterSelect.onchange = function () {
+filterSelect.addEventListener("change", function () {
 	nodes.filter.type = filterSelect.value;
-};
-filterQualityRange.oninput = function () {
+}, false);
+filterQualityRange.addEventListener("input", function () {
     nodes.filter.Q.value = filterQualityRange.value * 30;
     filterQualityLabel.innerHTML = toFixed(nodes.filter.Q.value, 2);
-};
-filterGainRange.oninput = function () {
+}, false);
+filterGainRange.addEventListener("input", function () {
     nodes.filter.gain.value = filterGainRange.value;
     filterGainLabel.innerHTML = nodes.filter.gain.value;
-};
+}, false);
 
 // DELAY CONTROLS *********************************************************************************
-delayTimeRange.oninput = function () {
+delayTimeRange.addEventListener("input", function () {
     var max = 1; // should be nodes.delay.maxDelayTime? Here set to 1 -> 1 second/1000ms
     nodes.delay.delayTime.value = delayTimeRange.value * max / 100;
     delayTimeLabel.innerHTML = Math.round(nodes.delay.delayTime.value*1000)+"ms";
-};
-delayFeedbackRange.oninput = function () {
+}, false);
+delayFeedbackRange.addEventListener("input", function () {
     var fraction = parseInt(delayFeedbackRange.value, 10) / parseInt(delayFeedbackRange.max, 10);
     // Let's use an x*x curve (x-squared) since simple linear (x) does not sound as good.
     nodes.feedback.gain.value = fraction * fraction;
     delayFeedbackLabel.innerHTML = Math.round(nodes.feedback.gain.value*100);
-};
+}, false);
 
 // OPTIONS CONTROLS *******************************************************************************
-spectrumSelect.onchange = function () {
+spectrumSelect.addEventListener("change", function () {
     switch (spectrumSelect.value) {
         case "1": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,144,200)", "rgb(255,144,200)"); break; // from blue to pink
         case "2": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,0,0)", "rgb(0,255,255)"); break; // from black to blue
         case "3": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,0,0)", "rgb(255,255,255)"); break; // from black to white
         default: paper.gradient(0, 0, util.docWidth, 0, "rgb(0,144,200)", "rgb(255,144,200)"); break; // from blue to pink
     }
-};
+}, false);
+spectrumSize.addEventListener("change", function () {
+    nodes.analyser.fftSize = spectrumSize.value;
+}, false);
 
 // PAGE VISIBILITY API ****************************************************************************
 var page = new Visibility({

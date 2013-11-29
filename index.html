@@ -162,11 +162,38 @@
 
 		<h4 id="options-title" class="ivory">Options</h4>
 		<div id="options-collapsible" class="hidden-content ivory" hidden>
-			<select id="spectrumSelect" class="w100">
-				<option value="1" selected>Blue -> Pink</option>
-				<option value="2">Black -> Blue</option>
-				<option value="3">Black -> White</option>
-			</select>
+			<table class="w100" border="0">
+				<tbody>
+					<tr>
+						<td>
+							Spectrum Color
+						</td>
+						<td>
+							<select id="spectrumSelect" class="w100">
+								<option value="1" selected>Blue -> Pink</option>
+								<option value="2">Black -> Blue</option>
+								<option value="3">Black -> White</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Spectrum Bars
+						</td>
+						<td>
+							<select id="spectrumSize" class="w100">
+								<option value="2048">1024</option>
+								<option value="1024" selected>512</option>
+								<option value="512">256</option>
+								<option value="256">128</option>
+								<option value="128">64</option>
+								<option value="64">32</option>
+								<option value="32">16</option>
+							</select>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 		
 		<table class="w100">

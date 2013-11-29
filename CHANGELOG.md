@@ -3,6 +3,12 @@
 _Copyright (c) 2013 Daniele Veneroni._  
 _Released under GPLv3 License. See [LICENSE.md](LICENSE.md) for further information._
 
+### Update 29/11/2013 (2)
+
+* Add option to select the number of bars of the spectrum
+* Changed DOM events to DOM Events Level 2
+* Updated Palette.js to version 0.7.1
+
 ### Update 29/11/2013
 
 * Changed graphic engine from Raphael.js (SVG) to Palette.js (Canvas)
