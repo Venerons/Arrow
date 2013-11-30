@@ -19,6 +19,8 @@ var oscDetuneLabel = document.getElementById("oscDetuneLabel");
 var oscDetuneRange = document.getElementById("oscDetuneRange");
 
 var filterSelect = document.getElementById("filterSelect");
+var filterFrequencyLabel = document.getElementById("filterFrequencyLabel");
+var filterFrequencyRange = document.getElementById("filterFrequencyRange");
 var filterQualityLabel = document.getElementById("filterQualityLabel");
 var filterQualityRange = document.getElementById("filterQualityRange");
 var filterGainLabel = document.getElementById("filterGainLabel");
@@ -29,7 +31,8 @@ var delayTimeRange = document.getElementById("delayTimeRange");
 var delayFeedbackLabel = document.getElementById("delayFeedbackLabel");
 var delayFeedbackRange = document.getElementById("delayFeedbackRange");
 
-var spectrumSelect = document.getElementById("spectrumSelect");
+var spectrumColor1 = document.getElementById("spectrumColor1");
+var spectrumColor2 = document.getElementById("spectrumColor2");
 var spectrumSize = document.getElementById("spectrumSize");
 
 var osccollapsible = document.getElementById("osc-collapsible");
@@ -56,12 +59,7 @@ function adaptScreen() {
     util.docWidth = Math.max(document.body.offsetWidth, document.documentElement.offsetWidth, document.body.clientWidth, document.documentElement.clientWidth);
     util.maxSpectrumHeight = util.docHeight / 4 * 3;
     paper.size(util.docWidth, util.docHeight);
-    switch (spectrumSelect.value) {
-        case "1": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,144,200)", "rgb(255,144,200)"); break; // from blue to pink
-        case "2": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,0,0)", "rgb(0,255,255)"); break; // from black to blue
-        case "3": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,0,0)", "rgb(255,255,255)"); break; // from black to white
-        default: paper.gradient(0, 0, util.docWidth, 0, "rgb(0,144,200)", "rgb(255,144,200)"); break; // from blue to pink
-    }
+    paper.gradient(0, 0, util.docWidth, 0, spectrumColor1.value, spectrumColor2.value);
 };
 
 adaptScreen();
@@ -109,9 +107,8 @@ document.getElementById("delay-title").addEventListener("click", function () { d
 document.getElementById("options-title").addEventListener("click", function () { optionscollapsible.hidden = !optionscollapsible.hidden; }, false);
 
 // PRESET CONTROLS ********************************************************************************
-presetSelect.addEventListener("change", function () {
-    var p = presets[presetSelect.value];
-    // set the environment
+function configurePreset(p) {
+    // SET THE CONTEXT
     nodes.touchOSC.type = p.osc.wave;
     nodes.touchOSC.detune.value = p.osc.detune;
     for (var i = 0; i < keyNodes.length; i++) {
@@ -124,11 +121,13 @@ presetSelect.addEventListener("change", function () {
     nodes.filter.gain.value = p.filter.gain;
     nodes.delay.delayTime.value = p.delay.delayTime;
     nodes.feedback.gain.value = p.delay.feedback;
-    // set the controls
+    // SET THE CONTROLS
     waveSelect.value = p.osc.wave;
     oscDetuneRange.value = p.osc.detune;
     oscDetuneLabel.innerHTML = p.osc.detune;
     filterSelect.value = p.filter.type;
+    //filterFrequencyRange.value = (BOH?);
+    filterFrequencyLabel.innerHTML = toFixed(p.filter.frequency, 2)+"Hz";
     filterQualityRange.value = p.filter.quality / 30;
     filterQualityLabel.innerHTML = toFixed(p.filter.quality, 2);
     filterGainRange.value = p.filter.gain;
@@ -137,7 +136,8 @@ presetSelect.addEventListener("change", function () {
     delayTimeLabel.innerHTML = Math.round(p.delay.delayTime*1000)+"ms";
     //delayFeedbackRange.value = (BOH?);
     delayFeedbackLabel.innerHTML = Math.round(p.delay.feedback*100);
-}, false);
+}
+presetSelect.addEventListener("change", function () { configurePreset(presets[presetSelect.value]); }, false);
 saveBtn.addEventListener("click", function () {
     var preset = {};
     preset.name = window.prompt("Preset Name: ");
@@ -174,6 +174,15 @@ oscDetuneRange.addEventListener("input", function () {
 filterSelect.addEventListener("change", function () {
 	nodes.filter.type = filterSelect.value;
 }, false);
+filterFrequencyRange.addEventListener("input", function () {
+    // Clamp the frequency between the minimum value (40 Hz) and half of the sampling rate.
+    var minValue = 40;
+    var maxValue = context.sampleRate / 2;
+    var numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2; // Logarithm (base 2) to compute how many octaves fall in the range.
+    var multiplier = Math.pow(2, numberOfOctaves * (filterFrequencyRange.value - 1.0)); // Compute a multiplier from 0 to 1 based on an exponential scale.
+    nodes.filter.frequency.value = maxValue * multiplier; // Get back to the frequency value between min and max.
+    filterFrequencyLabel.innerHTML = toFixed(nodes.filter.frequency.value, 2)+"Hz";
+}, false);
 filterQualityRange.addEventListener("input", function () {
     nodes.filter.Q.value = filterQualityRange.value * 30;
     filterQualityLabel.innerHTML = toFixed(nodes.filter.Q.value, 2);
@@ -197,14 +206,8 @@ delayFeedbackRange.addEventListener("input", function () {
 }, false);
 
 // OPTIONS CONTROLS *******************************************************************************
-spectrumSelect.addEventListener("change", function () {
-    switch (spectrumSelect.value) {
-        case "1": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,144,200)", "rgb(255,144,200)"); break; // from blue to pink
-        case "2": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,0,0)", "rgb(0,255,255)"); break; // from black to blue
-        case "3": paper.gradient(0, 0, util.docWidth, 0, "rgb(0,0,0)", "rgb(255,255,255)"); break; // from black to white
-        default: paper.gradient(0, 0, util.docWidth, 0, "rgb(0,144,200)", "rgb(255,144,200)"); break; // from blue to pink
-    }
-}, false);
+spectrumColor1.addEventListener("change", function () { paper.gradient(0, 0, util.docWidth, 0, spectrumColor1.value, spectrumColor2.value); }, false);
+spectrumColor2.addEventListener("change", function () { paper.gradient(0, 0, util.docWidth, 0, spectrumColor1.value, spectrumColor2.value); }, false);
 spectrumSize.addEventListener("change", function () {
     nodes.analyser.fftSize = spectrumSize.value;
 }, false);

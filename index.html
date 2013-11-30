@@ -105,6 +105,18 @@
 				<tbody>
 					<tr>
 						<td>
+							Frequency
+						</td>
+						<td class="center" id="filterFrequencyLabel">
+							???Hz
+						</td>
+						<td>
+							<!-- Quality range should be from 0.0001 to 1000 -->
+							<input id="filterFrequencyRange" class="w100" type="range" min="0" max="1" step="0.01" value="1"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
 							Quality
 						</td>
 						<td class="center" id="filterQualityLabel">
@@ -160,20 +172,17 @@
 			</table>
 		</div>
 
-		<h4 id="options-title" class="ivory">Options</h4>
+		<h4 id="options-title" class="ivory">Settings</h4>
 		<div id="options-collapsible" class="hidden-content ivory" hidden>
 			<table class="w100" border="0">
 				<tbody>
 					<tr>
-						<td>
+						<td class="w40">
 							Spectrum Color
 						</td>
 						<td>
-							<select id="spectrumSelect" class="w100">
-								<option value="1" selected>Blue -> Pink</option>
-								<option value="2">Black -> Blue</option>
-								<option value="3">Black -> White</option>
-							</select>
+							<input id="spectrumColor1" type="color" value="#0090C8" class="w40">
+							<input id="spectrumColor2" type="color" value="#FF90C8" class="w40">
 						</td>
 					</tr>
 					<tr>

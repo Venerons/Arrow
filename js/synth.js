@@ -75,6 +75,7 @@ function vcfFrequencyChange(e) {
     var numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2;
     var multiplier = Math.pow(2, numberOfOctaves * (range - 1.0));
     nodes.filter.frequency.value = maxValue * multiplier;
+    filterFrequencyLabel.innerHTML = toFixed(nodes.filter.frequency.value, 2)+"Hz";
 }
 
 function touch(e) {
@@ -130,4 +131,5 @@ keyboard.keyUp(function (note, frequency) {
     }
 });
 
+configurePreset(presets[presetSelect.value]);
 window.addEventListener('load', function () { document.getElementById("loading").hidden = true; }, false);
