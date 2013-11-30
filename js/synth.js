@@ -91,8 +91,8 @@ var pad = document.getElementById("pad");
 
 pad.addEventListener("pointerdown", touch, false);
 pad.addEventListener("pointerup", function () {
+    nodes.touchOSCvolume.gain.value = 0;
 	pad.removeEventListener("pointermove", touch);
-	nodes.touchOSCvolume.gain.value = 0;
 }, false);
 
 // KEYBOARD SETUP *********************************************************************************

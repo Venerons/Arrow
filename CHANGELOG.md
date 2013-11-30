@@ -3,6 +3,11 @@
 _Copyright (c) 2013 Daniele Veneroni._  
 _Released under GPLv3 License. See [LICENSE.md](LICENSE.md) for further information._
 
+### Update 30/11/2013
+
+* Fixed resizing on window resize
+* Lock screen orientation on landscape
+
 ### Update 29/11/2013 (2)
 
 * Add option to select the number of bars of the spectrum

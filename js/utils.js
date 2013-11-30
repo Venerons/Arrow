@@ -38,8 +38,6 @@ var delaycollapsible = document.getElementById("delay-collapsible");
 var optionscollapsible = document.getElementById("options-collapsible");
 
 // UTILITY FUNCTIONS ******************************************************************************
-function getDocHeight() { return Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, document.body.offsetHeight, document.documentElement.offsetHeight, document.body.clientHeight, document.documentElement.clientHeight ); }
-function getDocWidth() { return Math.max(document.body.scrollWidth, document.documentElement.scrollWidth, document.body.offsetWidth, document.documentElement.offsetWidth, document.body.clientWidth, document.documentElement.clientWidth); }
 function toFixed(value, precision) {
     var precision = precision || 0,
     neg = value < 0,
@@ -54,8 +52,8 @@ function toFixed(value, precision) {
 var util = {};
 
 function adaptScreen() {
-    util.docHeight = getDocHeight();
-    util.docWidth = getDocWidth();
+    util.docHeight = Math.max(document.body.offsetHeight, document.documentElement.offsetHeight, document.body.clientHeight, document.documentElement.clientHeight);
+    util.docWidth = Math.max(document.body.offsetWidth, document.documentElement.offsetWidth, document.body.clientWidth, document.documentElement.clientWidth);
     util.maxSpectrumHeight = util.docHeight / 4 * 3;
     paper.size(util.docWidth, util.docHeight);
     switch (spectrumSelect.value) {
@@ -68,7 +66,7 @@ function adaptScreen() {
 
 adaptScreen();
 
-window.addEventListener("resize", function () { adaptScreen(); }, false);
+window.addEventListener("resize", adaptScreen, false);
 
 // LOAD PRESETS ***********************************************************************************
 //localStorage.clear(); // CLEAR ALL LOCALSTORAGE
@@ -216,3 +214,7 @@ var page = new Visibility({
     onHidden: function () { nodes.volume.gain.value = 0; }, 
     onVisible: function () { nodes.volume.gain.value = 1; }
 });
+
+// ORIENTATION API ********************************************************************************
+window.screen.lockOrientation = window.screen.lockOrientation || window.screen.mozLockOrientation;
+if (window.screen.lockOrientation) { window.screen.lockOrientation("landscape"); }
