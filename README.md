@@ -10,7 +10,7 @@ Arrow is a brand new and modern synthesizer that uses the Web Audio API as sound
 * Touch and move to control pitch and filter frequency
 * Play using your computer keyboard
 * Load factory presets and save user presets
-* Animated spectrum
+* Animated and customizable sound spectrum
 
 ## Supported Browsers:
 
