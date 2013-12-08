@@ -53,11 +53,11 @@ nodes.volume.connect(nodes.analyser);
 nodes.analyser.connect(nodes.script);
 nodes.script.connect(context.destination);
 
-nodes.script.addEventListener("audioprocess", function() {
+nodes.script.onaudioprocess = function() {
     var array =  new Uint8Array(nodes.analyser.frequencyBinCount);
     nodes.analyser.getByteFrequencyData(array);
     drawSpectrum(array);
-}, false);
+};
 
 function oscFrequencyChange(e) {
 	var minValue = 27.5;

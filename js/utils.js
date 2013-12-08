@@ -221,3 +221,27 @@ var page = new Visibility({
 // ORIENTATION API ********************************************************************************
 window.screen.lockOrientation = window.screen.lockOrientation || window.screen.mozLockOrientation;
 if (window.screen.lockOrientation) { window.screen.lockOrientation("landscape"); }
+
+// FULLSCREEN API *********************************************************************************
+var fullscreenBtn = document.getElementById("fullscreenBtn");
+fullscreenBtn.addEventListener("click", function () {
+    var isFullscreen = document.fullscreenElement || document.mozFullScreen || document.webkitIsFullScreen;
+    if (isFullscreen) {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitCancelFullScreen) {
+            document.webkitCancelFullScreen();
+        }
+    } else {
+        var docElm = document.documentElement;
+        if (docElm.requestFullscreen) {
+            docElm.requestFullscreen();
+        } else if (docElm.mozRequestFullScreen) {
+            docElm.mozRequestFullScreen();
+        } else if (docElm.webkitRequestFullScreen) {
+            docElm.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+    }
+}, false);

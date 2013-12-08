@@ -3,6 +3,11 @@
 _Copyright (c) 2013 Daniele Veneroni._  
 _Released under GPLv3 License. See [LICENSE.md](LICENSE.md) for further information._
 
+### Update 08/12/2013
+
+* Added Fullscreen APIs
+* Reverted onaudioprocess event to DOM Level 0 event
+
 ### Update 01/12/2013 (Version 1.1.0)
 
 * Tagged version 1.1.0
