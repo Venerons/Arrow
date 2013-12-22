@@ -60,7 +60,7 @@ function adaptScreen() {
 	util.maxSpectrumHeight = util.docHeight / 4 * 3;
 	paper.size(util.docWidth, util.docHeight);
 	paper.gradient(0, 0, util.docWidth, 0, spectrumColor1.value, spectrumColor2.value);
-};
+}
 
 adaptScreen();
 

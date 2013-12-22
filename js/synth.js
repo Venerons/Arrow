@@ -4,13 +4,13 @@
 
 // WEB AUDIO API CHECK
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
-if (!AudioContext) {
-    alert("Sorry, your browser doesn't support the Web Audio APIs.");
+if (!window.AudioContext) {
+    window.alert("Sorry, your browser doesn't support the Web Audio APIs.");
     throw new Error("Sorry, your browser doesn't support the Web Audio APIs. Execution Aborted."); // ABORT ALL
 }
 
 // CREATE THE NODES
-var context = new AudioContext();
+var context = new window.AudioContext();
 var nodes = {};
 nodes.touchOSC = context.createOscillator();
 nodes.touchOSCvolume = context.createGain();
@@ -53,7 +53,7 @@ nodes.volume.connect(nodes.analyser);
 nodes.analyser.connect(nodes.script);
 nodes.script.connect(context.destination);
 
-nodes.script.onaudioprocess = function() {
+nodes.script.onaudioprocess = function () {
     var array =  new Uint8Array(nodes.analyser.frequencyBinCount);
     nodes.analyser.getByteFrequencyData(array);
     drawSpectrum(array);
@@ -75,7 +75,7 @@ function vcfFrequencyChange(e) {
     var numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2;
     var multiplier = Math.pow(2, numberOfOctaves * (range - 1.0));
     nodes.filter.frequency.value = maxValue * multiplier;
-    filterFrequencyLabel.innerHTML = toFixed(nodes.filter.frequency.value, 2)+"Hz";
+    filterFrequencyLabel.innerHTML = toFixed(nodes.filter.frequency.value, 2) + "Hz";
 }
 
 function touch(e) {
@@ -100,7 +100,7 @@ pad.addEventListener("pointerup", function () {
 var keyboard = qwertyHancock({
     id: 'keyboard',
     width: util.docWidth,
-    height: util.docHeigth/2,
+    height: util.docHeigth / 2,
     octaves: 2,
     startNote: 'C4',
     whiteNotesColour: 'white',
