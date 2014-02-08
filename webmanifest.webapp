@@ -1,0 +1,32 @@
+{
+    "name": "Arrow",
+    "description": "The Web Synthesizer",
+    "version": "1.2.0",
+    "csp": "allow 'self'; img-src 'self'; script-src 'self'; style-src 'self';",
+    "launch_path": "/Arrow/",
+    "appcache_path": "/manifest.appcache",
+    "orientation": ["landscape"],
+    "fullscreen": "true",
+    "icons": {
+        "16": "/Arrow/img/webapp/icon16.png",
+        "30": "/Arrow/img/webapp/icon30.png",
+        "32": "/Arrow/img/webapp/icon32.png",
+        "48": "/Arrow/img/webapp/icon48.png",
+        "60": "/Arrow/img/webapp/icon60.png",
+        "64": "/Arrow/img/webapp/icon64.png",
+        "90": "/Arrow/img/webapp/icon90.png",
+        "128": "/Arrow/img/webapp/icon128.png",
+        "256": "/Arrow/img/webapp/icon256.png",
+        "512": "/Arrow/img/webapp/icon512.png"
+    },
+    "developer": {
+        "name": "Daniele Veneroni",
+        "url": "http://venerons.github.io/"
+    },
+    "default_locale": "en",
+    "locales": {
+      "it": {
+        "description": "The Web Synthesizer"
+      }
+    }
+}

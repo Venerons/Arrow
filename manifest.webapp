@@ -2,8 +2,9 @@
     "name": "Arrow",
     "description": "The Web Synthesizer",
     "version": "1.2.0",
-    "csp": "allow 'self'; script-src 'self' ; style-src 'self';",
+    "csp": "allow 'self'; img-src 'self'; script-src 'self'; style-src 'self';",
     "launch_path": "/index.html",
+    "orientation": ["landscape"],
     "fullscreen": "true",
     "icons": {
         "16": "/img/webapp/icon16.png",

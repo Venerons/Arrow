@@ -11,10 +11,17 @@ NETWORK:
 # Additional resources to cache
 CACHE:
 LICENSE.md
+README.md
+css/style.css
+css/texture.png
+img/loading.gif
+img/keyboard.jpg
+js/presets.js
+js/synth.js
+js/utils.js
 js/lib/pointer.js
 js/lib/raphael-2.1.2.js
 js/lib/AudioContextMonkeyPatch.js
 js/lib/qwerty-hancock.js
 js/lib/palette.js
 js/lib/nest.js
-css/texture.png

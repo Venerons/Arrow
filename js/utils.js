@@ -4,6 +4,29 @@
 
 var paper = new Palette('pad');
 
+var presetSelect = $$('#presetSelect');
+
+var waveSelect = $$('#waveSelect'),
+	oscDetuneLabel = $$('#oscDetuneLabel'),
+	oscDetuneRange = $$('#oscDetuneRange');
+
+var filterSelect = $$('#filterSelect'),
+	filterFrequencyLabel = $$('#filterFrequencyLabel'),
+	filterFrequencyRange = $$('#filterFrequencyRange'),
+	filterQualityLabel = $$('#filterQualityLabel'),
+	filterQualityRange = $$('#filterQualityRange'),
+	filterGainLabel = $$('#filterGainLabel'),
+	filterGainRange = $$('#filterGainRange');
+
+var delayTimeLabel = $$('#delayTimeLabel'),
+	delayTimeRange = $$('#delayTimeRange'),
+	delayFeedbackLabel = $$('#delayFeedbackLabel'),
+	delayFeedbackRange = $$('#delayFeedbackRange');
+
+var spectrumColor1 = $$('#spectrumColor1'),
+	spectrumColor2 = $$('#spectrumColor2'),
+	spectrumSize = $$('#spectrumSize');
+
 // UTILITY FUNCTIONS ******************************************************************************
 var util = {};
 
@@ -12,7 +35,7 @@ function adaptScreen() {
 	util.docWidth = Math.max(document.body.offsetWidth, document.documentElement.offsetWidth, document.body.clientWidth, document.documentElement.clientWidth);
 	util.maxSpectrumHeight = util.docHeight / 4 * 3;
 	paper.size(util.docWidth, util.docHeight);
-	paper.gradient(0, 0, util.docWidth, 0, $$('#spectrumColor1').val(), $$('#spectrumColor2').val());
+	paper.gradient(0, 0, util.docWidth, 0, spectrumColor1.val(), spectrumColor2.val());
 }
 
 adaptScreen();
@@ -32,7 +55,7 @@ function loadPresets() {
 		selectContent += '<option value="' + i + '">' + presets[i].name + '</option>';
 		console.log(JSON.stringify(presets[i])); // PRINT PRESETS JSON ON THE CONSOLE
 	}
-	$$('#presetSelect').html(selectContent);
+	presetSelect.html(selectContent);
 }
 loadPresets();
 
@@ -99,23 +122,23 @@ function configurePreset(p) {
 	nodes.feedback.gain.value = p.delay.feedback;
 	
 	// SET THE CONTROLS
-	$$('#waveSelect').val(p.osc.wave);
-	$$('#oscDetuneRange').val(p.osc.detune);
-	$$('#oscDetuneLabel').text('' + p.osc.detune);
-	$$('#filterSelect').val(p.filter.type);
-	//$$('#filterFrequencyRange').val(BOH?);
-	$$('#filterFrequencyLabel').text(p.filter.frequency.toFixed(2) + 'Hz');
-	$$('#filterQualityRange').val(p.filter.quality / 30);
-	$$('#filterQualityLabel').text(p.filter.quality.toFixed(2));
-	$$('#filterGainRange').val(p.filter.gain);
-	$$('#filterGainLabel').text('' + p.filter.gain);
-	$$('#delayTimeRange').val(p.delay.delayTime / 1 * 100);
-	$$('#delayTimeLabel').text(Math.round(p.delay.delayTime * 1000) + 'ms');
-	//$$('#delayFeedbackRange).val(BOH?);
-	$$('#delayFeedbackLabel').text('' + Math.round(p.delay.feedback * 100));
+	waveSelect.val(p.osc.wave);
+	oscDetuneRange.val(p.osc.detune);
+	oscDetuneLabel.text('' + p.osc.detune);
+	filterSelect.val(p.filter.type);
+	//filterFrequencyRange.val(BOH?);
+	filterFrequencyLabel.text(p.filter.frequency.toFixed(2) + 'Hz');
+	filterQualityRange.val(p.filter.quality / 30);
+	filterQualityLabel.text(p.filter.quality.toFixed(2));
+	filterGainRange.val(p.filter.gain);
+	filterGainLabel.text('' + p.filter.gain);
+	delayTimeRange.val(p.delay.delayTime / 1 * 100);
+	delayTimeLabel.text(Math.round(p.delay.delayTime * 1000) + 'ms');
+	//delayFeedbackRange.val(BOH?);
+	delayFeedbackLabel.text('' + Math.round(p.delay.feedback * 100));
 }
-$$('#presetSelect').on('change', function () {
-	configurePreset(presets[presetSelect.value]);
+presetSelect.on('change', function () {
+	configurePreset(presets[presetSelect.val()]);
 });
 $$('#saveBtn').on('click', function () {
 	var name = window.prompt('Preset Name: ');
@@ -123,11 +146,11 @@ $$('#saveBtn').on('click', function () {
 		var preset = {
 			name: name,
 			osc: {
-				wave: $$('#waveSelect').val(),
-				detune: $$('#oscDetuneRange').val()
+				wave: waveSelect.val(),
+				detune: oscDetuneRange.val()
 			},
 			filter: {
-				type: $$('#filterSelect').val(),
+				type: filterSelect.val(),
 				frequency: nodes.filter.frequency.value,
 				quality: nodes.filter.Q.value,
 				gain: nodes.filter.gain.value
@@ -141,64 +164,63 @@ $$('#saveBtn').on('click', function () {
 		userPresets.presets.push(preset);
 		localStorage.userPresets = JSON.stringify(userPresets);
 		loadPresets();
-		$$('#presetSelect').val(presets.length - 1);
+		presetSelect.val(presets.length - 1);
 	}
 });
 
 // OSC CONTROLS ***********************************************************************************
-$$('#waveSelect').on('change', function () {
-	//var waves = { 'sine': nodes.osc.SINE, 'square': nodes.osc.SQUARE, 'sawtooth': nodes.osc.SAWTOOTH, 'triangle': nodes.osc.TRIANGLE };
-	nodes.touchOSC.type = $$('#waveSelect').val();
+waveSelect.on('change', function () {
+	nodes.touchOSC.type = waveSelect.val();
 });
-$$('#oscDetuneRange').on('input', function () {
-	nodes.touchOSC.detune.value = $$('#oscDetuneRange').val();
+oscDetuneRange.on('input', function () {
+	nodes.touchOSC.detune.value = oscDetuneRange.val();
 	for (var i = 0; i < keyNodes.length; i++) {
-		keyNodes[i].detune.value = $$('#oscDetuneRange').val();
+		keyNodes[i].detune.value = oscDetuneRange.val();
 	}
-	$$('#oscDetuneLabel').text($$('#oscDetuneRange').val());
+	oscDetuneLabel.text(oscDetuneRange.val());
 });
 
 // FILTER CONTROLS ********************************************************************************
-$$('#filterSelect').on('change', function () {
-	nodes.filter.type = $$('#filterSelect').val();
+filterSelect.on('change', function () {
+	nodes.filter.type = filterSelect.val();
 });
-$$('#filterFrequencyRange').on('input', function () {
+filterFrequencyRange.on('input', function () {
 	// Clamp the frequency between the minimum value (40 Hz) and half of the sampling rate.
 	var minValue = 40;
 	var maxValue = context.sampleRate / 2;
 	var numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2; // Logarithm (base 2) to compute how many octaves fall in the range.
-	var multiplier = Math.pow(2, numberOfOctaves * ($$('#filterFrequencyRange').val() - 1.0)); // Compute a multiplier from 0 to 1 based on an exponential scale.
+	var multiplier = Math.pow(2, numberOfOctaves * (filterFrequencyRange.val() - 1.0)); // Compute a multiplier from 0 to 1 based on an exponential scale.
 	nodes.filter.frequency.value = maxValue * multiplier; // Get back to the frequency value between min and max.
-	$$('#filterFrequencyLabel').text(nodes.filter.frequency.value.toFixed(2) + 'Hz');
+	filterFrequencyLabel.text(nodes.filter.frequency.value.toFixed(2) + 'Hz');
 });
-$$('#filterQualityRange').on('input', function () {
-	nodes.filter.Q.value = $$('#filterQualityRange').val() * 30;
-	$$('#filterQualityLabel').text(nodes.filter.Q.value.toFixed(2));
+filterQualityRange.on('input', function () {
+	nodes.filter.Q.value = filterQualityRange.val() * 30;
+	filterQualityLabel.text(nodes.filter.Q.value.toFixed(2));
 });
-$$('#filterGainRange').on('input', function () {
-	nodes.filter.gain.value = $$('#filterGainRange').val();
-	$$('#filterGainLabel').text('' + nodes.filter.gain.value);
+filterGainRange.on('input', function () {
+	nodes.filter.gain.value = filterGainRange.val();
+	filterGainLabel.text('' + nodes.filter.gain.value);
 });
 
 // DELAY CONTROLS *********************************************************************************
-$$('#delayTimeRange').on('input', function () {
+delayTimeRange.on('input', function () {
 	var max = 1; // should be nodes.delay.maxDelayTime? Here set to 1 -> 1 second/1000ms
-	nodes.delay.delayTime.value = $$('#delayTimeRange').val() * max / 100;
-	$$('#delayTimeLabel').text(Math.round(nodes.delay.delayTime.value * 1000) + 'ms');
+	nodes.delay.delayTime.value = delayTimeRange.val() * max / 100;
+	delayTimeLabel.text(Math.round(nodes.delay.delayTime.value * 1000) + 'ms');
 });
-$$('#delayFeedbackRange').on('input', function () {
-	var fraction = parseInt($$('#delayFeedbackRange').val(), 10) / parseInt($$('#delayFeedbackRange').first.max, 10);
+delayFeedbackRange.on('input', function () {
+	var fraction = parseInt(delayFeedbackRange.val(), 10) / parseInt(delayFeedbackRange.first.max, 10);
 	// Let's use an x*x curve (x-squared) since simple linear (x) does not sound as good.
 	nodes.feedback.gain.value = fraction * fraction;
-	$$('#delayFeedbackLabel').text('' + Math.round(nodes.feedback.gain.value * 100));
+	delayFeedbackLabel.text('' + Math.round(nodes.feedback.gain.value * 100));
 });
 
 // OPTIONS CONTROLS *******************************************************************************
 $$('#spectrumColor1, #spectrumColor2').on('change', function () {
-	paper.gradient(0, 0, util.docWidth, 0, $$('#spectrumColor1').val(), $$('#spectrumColor2').val());
+	paper.gradient(0, 0, util.docWidth, 0, spectrumColor1.val(), spectrumColor2.val());
 });
-$$('#spectrumSize').on('change', function () {
-	nodes.analyser.fftSize = $$('#spectrumSize').val();
+spectrumSize.on('change', function () {
+	nodes.analyser.fftSize = spectrumSize.val();
 });
 
 // PAGE VISIBILITY API ****************************************************************************
