@@ -1,6 +1,6 @@
 # Arrow
 
-_Copyright (c) 2013 Daniele Veneroni._  
+_Copyright (c) 2013-2014 Daniele Veneroni._  
 _Released under GPLv3 License. See [LICENSE.md](LICENSE.md) for further information._
 
 Arrow is a brand new and modern synthesizer that uses the Web Audio API as sound engine.
@@ -11,6 +11,7 @@ Arrow is a brand new and modern synthesizer that uses the Web Audio API as sound
 * Play using your computer keyboard
 * Load factory presets and save user presets
 * Animated and customizable sound spectrum
+* Experience total immersion with Fullscreen mode!
 
 ## Supported Browsers:
 
@@ -32,7 +33,7 @@ Chrome for Android  | 29.0+
 ## Licensing
 
 Arrow  
-Copyright (c) 2013 Daniele Veneroni  
+Copyright (c) 2013-2014 Daniele Veneroni  
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.  
 
