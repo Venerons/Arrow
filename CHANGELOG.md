@@ -1,7 +1,15 @@
 # Arrow Changelog
 
-_Copyright (c) 2013 Daniele Veneroni._  
+_Copyright (c) 2013-2014 Daniele Veneroni._  
 _Released under GPLv3 License. See [LICENSE.md](LICENSE.md) for further information._
+
+### Update ??/02/2014 (Version 1.2.0)
+
+* Updated CSS styles
+* Updated Palette.js to version 0.9.0
+* Removed visibility.js
+* Added Nest.js 0.13.0
+* Refactored to use Nest.js
 
 ### Update 08/12/2013
 

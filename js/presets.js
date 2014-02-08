@@ -1,6 +1,6 @@
-// Copyright (c) 2013 Daniele Veneroni.
+// Copyright (c) 2013-2014 Daniele Veneroni.
 // Released under GPLv3 License. See LICENSE.md for further information.
-"use strict";
+'use strict';
 
 var factoryPresets = [];
 

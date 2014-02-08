@@ -1,57 +1,10 @@
-// Copyright (c) 2013 Daniele Veneroni.
+// Copyright (c) 2013-2014 Daniele Veneroni.
 // Released under GPLv3 License. See LICENSE.md for further information.
-"use strict";
+'use strict';
 
-var paper = new Palette("pad");
-
-var menuBtn = document.getElementById("menuBtn");
-var menu = document.getElementById("menu");
-var saveBtn = document.getElementById("saveBtn");
-var helpBtn = document.getElementById("helpBtn");
-var closeBtn = document.getElementById("closeBtn");
-var help = document.getElementById("help");
-var helpCloseBtn = document.getElementById("helpCloseBtn");
-
-var presetSelect = document.getElementById("presetSelect");
-
-var waveSelect = document.getElementById("waveSelect");
-var oscDetuneLabel = document.getElementById("oscDetuneLabel");
-var oscDetuneRange = document.getElementById("oscDetuneRange");
-
-var filterSelect = document.getElementById("filterSelect");
-var filterFrequencyLabel = document.getElementById("filterFrequencyLabel");
-var filterFrequencyRange = document.getElementById("filterFrequencyRange");
-var filterQualityLabel = document.getElementById("filterQualityLabel");
-var filterQualityRange = document.getElementById("filterQualityRange");
-var filterGainLabel = document.getElementById("filterGainLabel");
-var filterGainRange = document.getElementById("filterGainRange");
-
-var delayTimeLabel = document.getElementById("delayTimeLabel");
-var delayTimeRange = document.getElementById("delayTimeRange");
-var delayFeedbackLabel = document.getElementById("delayFeedbackLabel");
-var delayFeedbackRange = document.getElementById("delayFeedbackRange");
-
-var spectrumColor1 = document.getElementById("spectrumColor1");
-var spectrumColor2 = document.getElementById("spectrumColor2");
-var spectrumSize = document.getElementById("spectrumSize");
-
-var osccollapsible = document.getElementById("osc-collapsible");
-var filtercollapsible = document.getElementById("filter-collapsible");
-var delaycollapsible = document.getElementById("delay-collapsible");
-var optionscollapsible = document.getElementById("options-collapsible");
+var paper = new Palette('pad');
 
 // UTILITY FUNCTIONS ******************************************************************************
-function toFixed(value, precision) {
-	var precision = precision || 0,
-	neg = value < 0,
-	power = Math.pow(10, precision),
-	value = Math.round(value * power),
-	integral = String((neg ? Math.ceil : Math.floor)(value / power)),
-	fraction = String((neg ? -value : value) % power),
-	padding = new Array(Math.max(precision - fraction.length, 0) + 1).join('0');
-	return precision ? integral + '.' +  padding + fraction : integral;
-}
-
 var util = {};
 
 function adaptScreen() {
@@ -59,27 +12,27 @@ function adaptScreen() {
 	util.docWidth = Math.max(document.body.offsetWidth, document.documentElement.offsetWidth, document.body.clientWidth, document.documentElement.clientWidth);
 	util.maxSpectrumHeight = util.docHeight / 4 * 3;
 	paper.size(util.docWidth, util.docHeight);
-	paper.gradient(0, 0, util.docWidth, 0, spectrumColor1.value, spectrumColor2.value);
+	paper.gradient(0, 0, util.docWidth, 0, $$('#spectrumColor1').val(), $$('#spectrumColor2').val());
 }
 
 adaptScreen();
 
-window.addEventListener("resize", adaptScreen, false);
+$$(window).on('resize', adaptScreen);
 
 // LOAD PRESETS ***********************************************************************************
 //localStorage.clear(); // CLEAR ALL LOCALSTORAGE
-if (localStorage.getItem("userPresets") === null) {
-	localStorage.userPresets = JSON.stringify({ "presets": [] });
+if (localStorage.getItem('userPresets') === null) {
+	localStorage.userPresets = JSON.stringify({ 'presets': [] });
 }
 var presets = [];
 function loadPresets() {
 	presets = factoryPresets.concat(JSON.parse(localStorage.userPresets).presets);
-	var selectContent = "";
+	var selectContent = '';
 	for (var i = 0; i < presets.length; i++) {
-		selectContent += "<option value=\"" + i + "\">" + presets[i].name + "</option>";
+		selectContent += '<option value="' + i + '">' + presets[i].name + '</option>';
 		console.log(JSON.stringify(presets[i])); // PRINT PRESETS JSON ON THE CONSOLE
 	}
-	presetSelect.innerHTML = selectContent;
+	$$('#presetSelect').html(selectContent);
 }
 loadPresets();
 
@@ -96,15 +49,38 @@ function drawSpectrum(array) {
 }
 
 // MENU CONTROLS **********************************************************************************
-menuBtn.addEventListener("click", function () { menu.hidden = false; menuBtn.hidden = true; }, false);
-helpBtn.addEventListener("click", function () { help.hidden = false; }, false);
-closeBtn.addEventListener("click", function () { menu.hidden = true; menuBtn.hidden = false; }, false);
-helpCloseBtn.addEventListener("click", function () { help.hidden = true; }, false);
+$$('#menuBtn').on('click', function () {
+	$$('#menu').show();
+	$$('#menuBtn').hide();
+});
+$$('#helpBtn').on('click', function () {
+	$$('#help').show();
+});
+$$('#closeBtn').on('click', function () {
+	$$('#menu').hide();
+	$$('#menuBtn').show();
+});
+$$('#helpCloseBtn').on('click', function () {
+	$$('#help').hide();
+});
 
-document.getElementById("osc-title").addEventListener("click", function () { osccollapsible.hidden = !osccollapsible.hidden; }, false);
-document.getElementById("filter-title").addEventListener("click", function () { filtercollapsible.hidden = !filtercollapsible.hidden; }, false);
-document.getElementById("delay-title").addEventListener("click", function () { delaycollapsible.hidden = !delaycollapsible.hidden; }, false);
-document.getElementById("options-title").addEventListener("click", function () { optionscollapsible.hidden = !optionscollapsible.hidden; }, false);
+var osccollapsible = document.getElementById('osc-collapsible');
+var filtercollapsible = document.getElementById('filter-collapsible');
+var delaycollapsible = document.getElementById('delay-collapsible');
+var optionscollapsible = document.getElementById('options-collapsible');
+
+$$('#osc-title').on('click', function () {
+	osccollapsible.hidden = !osccollapsible.hidden;
+});
+$$('#filter-title').on('click', function () {
+	filtercollapsible.hidden = !filtercollapsible.hidden;
+});
+$$('#delay-title').on('click', function () {
+	delaycollapsible.hidden = !delaycollapsible.hidden;
+});
+$$('#options-title').on('click', function () {
+	optionscollapsible.hidden = !optionscollapsible.hidden;
+});
 
 // PRESET CONTROLS ********************************************************************************
 function configurePreset(p) {
@@ -121,131 +97,127 @@ function configurePreset(p) {
 	nodes.filter.gain.value = p.filter.gain;
 	nodes.delay.delayTime.value = p.delay.delayTime;
 	nodes.feedback.gain.value = p.delay.feedback;
+	
 	// SET THE CONTROLS
-	waveSelect.value = p.osc.wave;
-	oscDetuneRange.value = p.osc.detune;
-	oscDetuneLabel.innerHTML = p.osc.detune;
-	filterSelect.value = p.filter.type;
-	//filterFrequencyRange.value = (BOH?);
-	filterFrequencyLabel.innerHTML = toFixed(p.filter.frequency, 2)+"Hz";
-	filterQualityRange.value = p.filter.quality / 30;
-	filterQualityLabel.innerHTML = toFixed(p.filter.quality, 2);
-	filterGainRange.value = p.filter.gain;
-	filterGainLabel.innerHTML = p.filter.gain;
-	delayTimeRange.value = p.delay.delayTime / 1 * 100;
-	delayTimeLabel.innerHTML = Math.round(p.delay.delayTime*1000)+"ms";
-	//delayFeedbackRange.value = (BOH?);
-	delayFeedbackLabel.innerHTML = Math.round(p.delay.feedback*100);
+	$$('#waveSelect').val(p.osc.wave);
+	$$('#oscDetuneRange').val(p.osc.detune);
+	$$('#oscDetuneLabel').text('' + p.osc.detune);
+	$$('#filterSelect').val(p.filter.type);
+	//$$('#filterFrequencyRange').val(BOH?);
+	$$('#filterFrequencyLabel').text(p.filter.frequency.toFixed(2) + 'Hz');
+	$$('#filterQualityRange').val(p.filter.quality / 30);
+	$$('#filterQualityLabel').text(p.filter.quality.toFixed(2));
+	$$('#filterGainRange').val(p.filter.gain);
+	$$('#filterGainLabel').text('' + p.filter.gain);
+	$$('#delayTimeRange').val(p.delay.delayTime / 1 * 100);
+	$$('#delayTimeLabel').text(Math.round(p.delay.delayTime * 1000) + 'ms');
+	//$$('#delayFeedbackRange).val(BOH?);
+	$$('#delayFeedbackLabel').text('' + Math.round(p.delay.feedback * 100));
 }
-presetSelect.addEventListener("change", function () { configurePreset(presets[presetSelect.value]); }, false);
-saveBtn.addEventListener("click", function () {
-	var preset = {};
-	preset.name = window.prompt("Preset Name: ");
-	preset.osc = {};
-	preset.osc.wave = waveSelect.value;
-	preset.osc.detune = oscDetuneRange.value;
-	preset.filter = {};
-	preset.filter.type = filterSelect.value;
-	preset.filter.frequency = nodes.filter.frequency.value;
-	preset.filter.quality = nodes.filter.Q.value;
-	preset.filter.gain = nodes.filter.gain.value;
-	preset.delay = {};
-	preset.delay.delayTime = nodes.delay.delayTime.value;
-	preset.delay.feedback = nodes.feedback.gain.value;
-	var userPresets = JSON.parse(localStorage.userPresets);
-	userPresets.presets.push(preset);
-	localStorage.userPresets = JSON.stringify(userPresets);
-	loadPresets();
-	presetSelect.value = presets.length-1;
-}, false);
+$$('#presetSelect').on('change', function () {
+	configurePreset(presets[presetSelect.value]);
+});
+$$('#saveBtn').on('click', function () {
+	var name = window.prompt('Preset Name: ');
+	if (name && name !== '') {
+		var preset = {
+			name: name,
+			osc: {
+				wave: $$('#waveSelect').val(),
+				detune: $$('#oscDetuneRange').val()
+			},
+			filter: {
+				type: $$('#filterSelect').val(),
+				frequency: nodes.filter.frequency.value,
+				quality: nodes.filter.Q.value,
+				gain: nodes.filter.gain.value
+			},
+			delay: {
+				delayTime: nodes.delay.delayTime.value,
+				feedback: nodes.feedback.gain.value
+			}
+		};
+		var userPresets = JSON.parse(localStorage.userPresets);
+		userPresets.presets.push(preset);
+		localStorage.userPresets = JSON.stringify(userPresets);
+		loadPresets();
+		$$('#presetSelect').val(presets.length - 1);
+	}
+});
 
 // OSC CONTROLS ***********************************************************************************
-waveSelect.addEventListener("change", function () {
-	//var waves = { "sine": nodes.osc.SINE, "square": nodes.osc.SQUARE, "sawtooth": nodes.osc.SAWTOOTH, "triangle": nodes.osc.TRIANGLE };
-	nodes.touchOSC.type = waveSelect.value;
-}, false);
-oscDetuneRange.addEventListener("input", function () {
-	nodes.touchOSC.detune.value = oscDetuneRange.value;
-	for (var i = 0; i < keyNodes.length; i++) { keyNodes[i].detune.value = oscDetuneRange.value; }
-	oscDetuneLabel.innerHTML = oscDetuneRange.value;
-}, false);
+$$('#waveSelect').on('change', function () {
+	//var waves = { 'sine': nodes.osc.SINE, 'square': nodes.osc.SQUARE, 'sawtooth': nodes.osc.SAWTOOTH, 'triangle': nodes.osc.TRIANGLE };
+	nodes.touchOSC.type = $$('#waveSelect').val();
+});
+$$('#oscDetuneRange').on('input', function () {
+	nodes.touchOSC.detune.value = $$('#oscDetuneRange').val();
+	for (var i = 0; i < keyNodes.length; i++) {
+		keyNodes[i].detune.value = $$('#oscDetuneRange').val();
+	}
+	$$('#oscDetuneLabel').text($$('#oscDetuneRange').val());
+});
 
 // FILTER CONTROLS ********************************************************************************
-filterSelect.addEventListener("change", function () {
-	nodes.filter.type = filterSelect.value;
-}, false);
-filterFrequencyRange.addEventListener("input", function () {
+$$('#filterSelect').on('change', function () {
+	nodes.filter.type = $$('#filterSelect').val();
+});
+$$('#filterFrequencyRange').on('input', function () {
 	// Clamp the frequency between the minimum value (40 Hz) and half of the sampling rate.
 	var minValue = 40;
 	var maxValue = context.sampleRate / 2;
 	var numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2; // Logarithm (base 2) to compute how many octaves fall in the range.
-	var multiplier = Math.pow(2, numberOfOctaves * (filterFrequencyRange.value - 1.0)); // Compute a multiplier from 0 to 1 based on an exponential scale.
+	var multiplier = Math.pow(2, numberOfOctaves * ($$('#filterFrequencyRange').val() - 1.0)); // Compute a multiplier from 0 to 1 based on an exponential scale.
 	nodes.filter.frequency.value = maxValue * multiplier; // Get back to the frequency value between min and max.
-	filterFrequencyLabel.innerHTML = toFixed(nodes.filter.frequency.value, 2)+"Hz";
-}, false);
-filterQualityRange.addEventListener("input", function () {
-	nodes.filter.Q.value = filterQualityRange.value * 30;
-	filterQualityLabel.innerHTML = toFixed(nodes.filter.Q.value, 2);
-}, false);
-filterGainRange.addEventListener("input", function () {
-	nodes.filter.gain.value = filterGainRange.value;
-	filterGainLabel.innerHTML = nodes.filter.gain.value;
-}, false);
+	$$('#filterFrequencyLabel').text(nodes.filter.frequency.value.toFixed(2) + 'Hz');
+});
+$$('#filterQualityRange').on('input', function () {
+	nodes.filter.Q.value = $$('#filterQualityRange').val() * 30;
+	$$('#filterQualityLabel').text(nodes.filter.Q.value.toFixed(2));
+});
+$$('#filterGainRange').on('input', function () {
+	nodes.filter.gain.value = $$('#filterGainRange').val();
+	$$('#filterGainLabel').text('' + nodes.filter.gain.value);
+});
 
 // DELAY CONTROLS *********************************************************************************
-delayTimeRange.addEventListener("input", function () {
+$$('#delayTimeRange').on('input', function () {
 	var max = 1; // should be nodes.delay.maxDelayTime? Here set to 1 -> 1 second/1000ms
-	nodes.delay.delayTime.value = delayTimeRange.value * max / 100;
-	delayTimeLabel.innerHTML = Math.round(nodes.delay.delayTime.value*1000)+"ms";
-}, false);
-delayFeedbackRange.addEventListener("input", function () {
-	var fraction = parseInt(delayFeedbackRange.value, 10) / parseInt(delayFeedbackRange.max, 10);
+	nodes.delay.delayTime.value = $$('#delayTimeRange').val() * max / 100;
+	$$('#delayTimeLabel').text(Math.round(nodes.delay.delayTime.value * 1000) + 'ms');
+});
+$$('#delayFeedbackRange').on('input', function () {
+	var fraction = parseInt($$('#delayFeedbackRange').val(), 10) / parseInt($$('#delayFeedbackRange').first.max, 10);
 	// Let's use an x*x curve (x-squared) since simple linear (x) does not sound as good.
 	nodes.feedback.gain.value = fraction * fraction;
-	delayFeedbackLabel.innerHTML = Math.round(nodes.feedback.gain.value*100);
-}, false);
+	$$('#delayFeedbackLabel').text('' + Math.round(nodes.feedback.gain.value * 100));
+});
 
 // OPTIONS CONTROLS *******************************************************************************
-spectrumColor1.addEventListener("change", function () { paper.gradient(0, 0, util.docWidth, 0, spectrumColor1.value, spectrumColor2.value); }, false);
-spectrumColor2.addEventListener("change", function () { paper.gradient(0, 0, util.docWidth, 0, spectrumColor1.value, spectrumColor2.value); }, false);
-spectrumSize.addEventListener("change", function () {
-	nodes.analyser.fftSize = spectrumSize.value;
-}, false);
+$$('#spectrumColor1, #spectrumColor2').on('change', function () {
+	paper.gradient(0, 0, util.docWidth, 0, $$('#spectrumColor1').val(), $$('#spectrumColor2').val());
+});
+$$('#spectrumSize').on('change', function () {
+	nodes.analyser.fftSize = $$('#spectrumSize').val();
+});
 
 // PAGE VISIBILITY API ****************************************************************************
-var page = new Visibility({
-	onHidden: function () { nodes.volume.gain.value = 0; }, 
-	onVisible: function () { nodes.volume.gain.value = 1; }
+$$.visibility({
+	onHidden: function () {
+		nodes.volume.gain.value = 0;
+	}, 
+	onVisible: function () {
+		nodes.volume.gain.value = 1;
+	}
 });
 
 // ORIENTATION API ********************************************************************************
 window.screen.lockOrientation = window.screen.lockOrientation || window.screen.mozLockOrientation;
-if (window.screen.lockOrientation) { window.screen.lockOrientation("landscape"); }
+if (window.screen.lockOrientation) {
+	window.screen.lockOrientation('landscape');
+}
 
 // FULLSCREEN API *********************************************************************************
-var fullscreenBtn = document.getElementById("fullscreenBtn");
-fullscreenBtn.addEventListener("click", function () {
-	var isFullscreen = document.fullscreenElement || document.mozFullScreen || document.webkitIsFullScreen;
-	if (isFullscreen) {
-		if (document.exitFullscreen) {
-			document.exitFullscreen();
-		} else if (document.mozCancelFullScreen) {
-			document.mozCancelFullScreen();
-		} else if (document.webkitCancelFullScreen) {
-			document.webkitCancelFullScreen();
-		}
-	} else {
-		var docElm = document.documentElement;
-		if (docElm.requestFullscreen) {
-			docElm.requestFullscreen();
-		} else if (docElm.mozRequestFullScreen) {
-			docElm.mozRequestFullScreen();
-		} else if (docElm.webkitRequestFullScreen) {
-			if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
-				docElm.webkitRequestFullScreen();
-			} else {
-				docElm.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
-			}
-		}
-	}
-}, false);
+$$('#fullscreenBtn').on('click', function () {
+	$$(document.documentElement).toggleFullscreen();
+});

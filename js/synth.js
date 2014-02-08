@@ -1,25 +1,26 @@
-// Copyright (c) 2013 Daniele Veneroni.
+// Copyright (c) 2013-2014 Daniele Veneroni.
 // Released under GPLv3 License. See LICENSE.md for further information.
-"use strict";
+'use strict';
 
 // WEB AUDIO API CHECK
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 if (!window.AudioContext) {
-    window.alert("Sorry, your browser doesn't support the Web Audio APIs.");
-    throw new Error("Sorry, your browser doesn't support the Web Audio APIs. Execution Aborted."); // ABORT ALL
+    window.alert('Sorry, your browser doesn\'t support the Web Audio APIs.');
+    throw new Error('Sorry, your browser doesn\'t support the Web Audio APIs. Execution Aborted.'); // ABORT ALL
 }
 
 // CREATE THE NODES
 var context = new window.AudioContext();
-var nodes = {};
-nodes.touchOSC = context.createOscillator();
-nodes.touchOSCvolume = context.createGain();
-nodes.filter = context.createBiquadFilter();
-nodes.delay = context.createDelay();
-nodes.feedback = context.createGain();
-nodes.volume = context.createGain();
-nodes.analyser = context.createAnalyser();
-nodes.script = context.createScriptProcessor(2048, 1, 1);
+var nodes = {
+    touchOSC: context.createOscillator(),
+    touchOSCvolume: context.createGain(),
+    filter: context.createBiquadFilter(),
+    delay: context.createDelay(),
+    feedback: context.createGain(),
+    volume: context.createGain(),
+    analyser: context.createAnalyser(),
+    script: context.createScriptProcessor(2048, 1, 1)
+};
 
 // SETUP THE NODES
 nodes.touchOSC.type = waveSelect.value;
@@ -54,47 +55,54 @@ nodes.analyser.connect(nodes.script);
 nodes.script.connect(context.destination);
 
 nodes.script.onaudioprocess = function () {
-    var array =  new Uint8Array(nodes.analyser.frequencyBinCount);
+    var array = new Uint8Array(nodes.analyser.frequencyBinCount);
     nodes.analyser.getByteFrequencyData(array);
     drawSpectrum(array);
 };
 
 function oscFrequencyChange(e) {
-	var minValue = 27.5;
-	var maxValue = 4186.01;
-	var range = e.x * 1.0 / util.docWidth;
-	var numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2;
-	var multiplier = Math.pow(2, numberOfOctaves * (range - 1.0));
+	var minValue = 27.5,
+        maxValue = 4186.01,
+        range = e.x * 1.0 / util.docWidth,
+        numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2,
+        multiplier = Math.pow(2, numberOfOctaves * (range - 1.0));
 	nodes.touchOSC.frequency.value = maxValue * multiplier;
 }
 
 function vcfFrequencyChange(e) {
-    var minValue = 27.5;
-    var maxValue = context.sampleRate / 2;
-    var range = 1.0 - (e.y * 1.0 / util.docHeight);
-    var numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2;
-    var multiplier = Math.pow(2, numberOfOctaves * (range - 1.0));
+    var minValue = 27.5,
+        maxValue = context.sampleRate / 2,
+        range = 1.0 - (e.y * 1.0 / util.docHeight),
+        numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2,
+        multiplier = Math.pow(2, numberOfOctaves * (range - 1.0));
     nodes.filter.frequency.value = maxValue * multiplier;
-    filterFrequencyLabel.innerHTML = toFixed(nodes.filter.frequency.value, 2) + "Hz";
+    $$('#filterFrequencyLabel').text(nodes.filter.frequency.value.toFixed(2) + 'Hz');
 }
 
 function touch(e) {
-	try { nodes.touchOSC.start(0); } catch (e) {}
+	try {
+        nodes.touchOSC.start(0);
+    } catch (e) {}
 	nodes.touchOSCvolume.gain.value = 1;
 	oscFrequencyChange(e);
 	vcfFrequencyChange(e);
-	pad.addEventListener("pointermove", touch, false);
 	e.preventDefault();
 	return false;
 }
 
-var pad = document.getElementById("pad");
+var tapping = false;
 
-pad.addEventListener("pointerdown", touch, false);
-pad.addEventListener("pointerup", function () {
+$$('#pad').on('pointerdown', function (e) {
+    tapping = true;
+    touch(e);
+}).on('pointermove', function (e) {
+    if (tapping) {
+        touch(e);
+    }
+}).on('pointerup mouseout', function () {
+    tapping = false;
     nodes.touchOSCvolume.gain.value = 0;
-	pad.removeEventListener("pointermove", touch);
-}, false);
+});
 
 // KEYBOARD SETUP *********************************************************************************
 var keyboard = qwertyHancock({
@@ -117,7 +125,9 @@ keyboard.keyDown(function (note, frequency) {
     oscillator.frequency.value = frequency;
     oscillator.detune.value = oscDetuneRange.value;
     oscillator.connect(nodes.filter);
-    try { oscillator.start(0); } catch (e) {}
+    try {
+        oscillator.start(0);
+    } catch (e) {}
     keyNodes.push(oscillator);
 });
 
@@ -132,4 +142,6 @@ keyboard.keyUp(function (note, frequency) {
 });
 
 configurePreset(presets[presetSelect.value]);
-window.addEventListener('load', function () { document.getElementById("loading").hidden = true; }, false);
+$$(window).on('load', function () {
+    $$('#loading').hide();
+});

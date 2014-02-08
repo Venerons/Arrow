@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 01-12-2013:v1
+# 08-02-2014:v1
 
 # page that will be displayed if the user is offline
 FALLBACK:
@@ -10,12 +10,11 @@ NETWORK:
 
 # Additional resources to cache
 CACHE:
-manifest.webapp
 LICENSE.md
-js/lib/pointer.min.js
-js/lib/visibility.min.js
-js/lib/raphael-2.1.2.min.js
-js/lib/AudioContextMonkeyPatch.min.js
-js/lib/qwerty-hancock.min.js
+js/lib/pointer.js
+js/lib/raphael-2.1.2.js
+js/lib/AudioContextMonkeyPatch.js
+js/lib/qwerty-hancock.js
 js/lib/palette.js
+js/lib/nest.js
 css/texture.png
