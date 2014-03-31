@@ -227,7 +227,7 @@ spectrumSize.on('change', function () {
 $$.visibility({
 	onHidden: function () {
 		nodes.volume.gain.value = 0;
-	}, 
+	},
 	onVisible: function () {
 		nodes.volume.gain.value = 1;
 	}
